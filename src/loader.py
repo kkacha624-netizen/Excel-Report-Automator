@@ -5,7 +5,13 @@ import pandas as pd
 
 ENCODINGS = ("utf-8", "utf-8-sig", "cp932")
 
+def get_fileNames(path: str | Path, suffix: list[str]) -> list[str]:
+    target_dir = Path(path)
+    fileNames = [file.name for file in target_dir.iterdir() if file.is_file() and file.suffix in suffix]
+    return fileNames
 
+#INFO: CSVを読み込む用の関数
+#NOTE: 下のload_files関数より呼び出される
 def load_csv(path: str | Path) -> pd.DataFrame:
     """Load a CSV file while trying common Japanese encodings."""
     csv_path = Path(path)
