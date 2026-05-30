@@ -1,9 +1,10 @@
 from pathlib import Path
-
+from collections.abc import Sequence
 import pandas as pd
 
 
 ENCODINGS = ("utf-8", "utf-8-sig", "cp932")
+SupportedSuffix = [".csv", ".xlsx"]
 
 def get_fileNames(path: str | Path, suffix: list[str]) -> list[str]:
     target_dir = Path(path)
@@ -35,7 +36,7 @@ def load_excel(path: str | Path, sheet_name: str | int | None = 0) -> pd.DataFra
     return pd.read_excel(excel_path, sheet_name=sheet_name)
 
 
-def load_files(paths: list[str | Path]) -> pd.DataFrame:
+def load_files(paths: Sequence[str | Path]) -> pd.DataFrame:
     """Load multiple CSV/Excel files and combine them into one DataFrame."""
     frames: list[pd.DataFrame] = []
 

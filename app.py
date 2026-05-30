@@ -1,4 +1,6 @@
 from pathlib import Path
+from collections.abc import Sequence
+from pyparsing import Suppress
 
 from src.aggregator import (
     aggregate_category_sales,
@@ -9,19 +11,20 @@ from src.aggregator import (
 )
 from src.column_mapper import load_mapping, map_columns
 from src.comment_generator import generate_summary_comments
-from src.loader import load_files
+from src.loader import get_fileNames, load_files, SupportedSuffix
 from src.report_writer import write_report
 from src.validator import validate_data
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_FILE = BASE_DIR / "data" / "sample_sales.csv"
+
+DATA_DIR = BASE_DIR / "data"
 MAPPING_FILE = BASE_DIR / "config" / "default_mapping.yml"
 OUTPUT_FILE = BASE_DIR / "outputs" / "report.xlsx"
 
 
 def main() -> None:
-    input_files = [DATA_FILE]
+    input_files = [DATA_DIR / fileName for fileName in get_fileNames(DATA_DIR, SupportedSuffix)]
 
     # 入力データを読み込み、外部設定に従って列名を標準化する。
     raw_df = load_files(input_files)

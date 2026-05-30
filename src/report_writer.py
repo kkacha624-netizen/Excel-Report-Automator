@@ -1,7 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
-
+from collections.abc import Sequence
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
@@ -46,7 +46,7 @@ def _write_key_value_rows(ws, rows: Iterable[tuple[str, object]]) -> None:
 
 def write_report(
     output_path: str | Path,
-    input_files: list[str | Path],
+    input_files: Sequence[str | Path],
     summary_metrics: pd.DataFrame,
     comments: list[str],
     monthly_summary: pd.DataFrame,
