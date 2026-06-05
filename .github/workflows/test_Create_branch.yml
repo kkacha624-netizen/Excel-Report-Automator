@@ -30,7 +30,7 @@ jobs:
               issue = context.payload.issue;
             } else if (context.eventName === 'workflow_dispatch') {
               const issueNumber = Number(core.getInput('issue_number'));
-              const { data } = await github.issues.get({
+              const { data } = await github.rest.issues.get({
                 owner,
                 repo,
                 issue_number: issueNumber,
