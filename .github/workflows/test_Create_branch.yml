@@ -63,7 +63,7 @@ jobs:
             }
                 
             const issueTitle = issue.title.trim();
-            console.log(`Issue Title: ${issue.title}`);
+            console.log(`Issue Title: ${JSON.stringify(issueTitle)}`);
             const fallbackBranchName = `issue-${issue.number}`;
             
             const branchName = isValidBranchName(issueTitle)
