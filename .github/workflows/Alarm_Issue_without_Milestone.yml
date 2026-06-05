@@ -1,0 +1,28 @@
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  alarm-issue-without-milestone:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if issue has milestone
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            if (!issue.milestone) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issue.number,
+                body: "このIssueにはマイルストーンが設定されていません。マイルストーンを設定してください。",
+              });
+            }
