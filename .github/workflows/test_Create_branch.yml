@@ -29,7 +29,7 @@ jobs:
             if (context.eventName === 'issues') {
               issue = context.payload.issue;
             } else if (context.eventName === 'workflow_dispatch') {
-              const input = core.getInput('issue_number');
+              const input = context.payload.inputs.issue_number;
               console.log(`Received input: ${input}`);
               const issueNumber = Number(input);
               console.log(`Input Number: ${issueNumber}`);
