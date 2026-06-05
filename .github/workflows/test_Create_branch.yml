@@ -46,7 +46,7 @@ jobs:
                     return false;
                 }
                 
-                if (!/^[a-zA-Z][a-zA-Z0-9.-_/]*$/.test(name)) {
+                if (!/^[a-zA-Z][a-zA-Z0-9.\-_/]*$/.test(name)) {
                     console.log("Branch name is invalid");
                     return false;
                 }
