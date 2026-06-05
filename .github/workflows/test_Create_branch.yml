@@ -1,0 +1,35 @@
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to create branch from'
+        required: true
+        default: '1'
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create branch
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const issue = context.payload.issue;
+            console.log(issue.title);
+
+            function isValidBranchName(name) {
+              if (!name) return false;
+
+              if (/\s/.test(name)) return false;
+              if (/[~^:?*\[\]\\]/.test(name)) return false;
+              if (/[\x00-\x20\x7f]/.test(name)) return false;
+
+              return true;
+            }
