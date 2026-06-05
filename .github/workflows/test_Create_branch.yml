@@ -21,15 +21,43 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const issue = context.payload.issue;
-            console.log(issue.title);
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
 
-            function isValidBranchName(name) {
+            let issue;
+
+            if (context.eventName === 'issues') {
+              issue = context.payload.issue;
+            } else if (context.eventName === 'workflow_dispatch') {
+              const issueNumber = Number(core.getInput('issue_number'));
+              const { data } = await github.issues.get({
+                owner,
+                repo,
+                issue_number: issueNumber,
+              });
+              issue = data;
+            }
+
+            console.log(`Issue Number: ${issue.number}`);
+            console.log(`Issue Title: ${issue.title}`);
+
+            function isValidBranchName(name){
               if (!name) return false;
-
-              if (/\s/.test(name)) return false;
-              if (/[~^:?*\[\]\\]/.test(name)) return false;
-              if (/[\x00-\x20\x7f]/.test(name)) return false;
-
+              
+              if (!/^[a-zA-Z][a-zA-Z0-9.-_/]*$/.test(name)) return false;
+              if (name.startsWith("refs/")) return false;
+              if (/[0-9A-F]{40}$/.test(name)) return false;
+              
               return true;
             }
+
+            const issueTitle = issue.title.trim();
+            const fallbackBranchName = `issue-${issue.number}`;
+            
+            const branchName = isValidBranchName(issueTitle)
+              ? issueTitle
+              : fallbackBranchName;
+
+            console.log(`Branch Name: ${branchName}`);
+        
+
