@@ -1,0 +1,72 @@
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create branch
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            let issue;
+            issue = context.payload.issue;
+
+            console.log(`Issue Number: ${issue.number}`);
+            
+            function isValidBranchName(name){
+                if (!name){
+                    console.log("Branch name is empty");
+                    return false;
+                }
+                
+                if (!/^[a-zA-Z][a-zA-Z0-9.\-_/]*$/.test(name)) {
+                    console.log("Branch name is invalid");
+                    return false;
+                }
+                if (name.startsWith("refs/")) {
+                    console.log("Branch name starts with 'refs/'");
+                    return false;
+                }
+                if (/[0-9A-F]{40}$/.test(name)) {
+                    console.log("Branch name is a commit hash");
+                    return false;
+                }
+                
+                return true;
+            }
+                
+            const issueTitle = issue.title.trim();
+            console.log(`Issue Title: ${JSON.stringify(issueTitle)}`);
+            const fallbackBranchName = `issue-${issue.number}`;
+            
+            const branchName = isValidBranchName(issueTitle)
+              ? issueTitle
+              : fallbackBranchName;
+
+            console.log(`Branch Name: ${branchName}`);
+
+            try {
+              await github.rest.git.createRef({
+                owner,
+                repo,
+                ref: `refs/heads/${branchName}`,
+                sha: context.sha,
+              });
+              console.log(`ブランチ '${branchName}' を作成しました。`);
+            } catch (error) {
+              if (error.status === 422) {
+                console.error(`Branch '${branchName}' already exists.`);
+              } else {
+                console.error(`Error creating branch: ${error.message}`);
+              }
+            }
