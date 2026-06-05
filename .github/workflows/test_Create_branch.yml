@@ -71,4 +71,19 @@ jobs:
               : fallbackBranchName;
 
             console.log(`Branch Name: ${branchName}`);
-    
+
+            try {
+              await github.rest.git.createRef({
+                owner,
+                repo,
+                ref: `refs/heads/${branchName}`,
+                sha: context.sha,
+              });
+              console.log(`ブランチ '${branchName}' を作成しました。`);
+            } catch (error) {
+              if (error.status === 422) {
+                console.error(`Branch '${branchName}' already exists.`);
+              } else {
+                console.error(`Error creating branch: ${error.message}`);
+              }
+            }
