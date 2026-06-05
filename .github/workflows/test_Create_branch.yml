@@ -41,11 +41,23 @@ jobs:
             console.log(`Issue Number: ${issue.number}`);
             
             function isValidBranchName(name){
-                if (!name) return false;
+                if (!name){
+                    console.log("Branch name is empty");
+                    return false;
+                }
                 
-                if (!/^[a-zA-Z][a-zA-Z0-9.-_/]*$/.test(name)) return false;
-                if (name.startsWith("refs/")) return false;
-                if (/[0-9A-F]{40}$/.test(name)) return false;
+                if (!/^[a-zA-Z][a-zA-Z0-9.-_/]*$/.test(name)) {
+                    console.log("Branch name is invalid");
+                    return false;
+                }
+                if (name.startsWith("refs/")) {
+                    console.log("Branch name starts with 'refs/'");
+                    return false;
+                }
+                if (/[0-9A-F]{40}$/.test(name)) {
+                    console.log("Branch name is a commit hash");
+                    return false;
+                }
                 
                 return true;
             }
